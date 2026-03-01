@@ -25,6 +25,8 @@ safe_anchors= [
     "Heavy traffic but normal pedestrian conditions",
     "People commuting calmly at a train station",
     "An ordinary busy urban scene with foot traffic",
+    "A regular person going on with their day",
+    "People having fun",
 ]
 
 anchors = threat_anchors + safe_anchors
@@ -173,7 +175,7 @@ if __name__ == "__main__":
     if len(sys.argv) >= 2:                      # at least one argument was given
         input_path = sys.argv[1]                # first argument is always the file path
 
-        if input_path.endswith(".mp4") or input_path.endswith(".mov") or input_path.endswith(".avi"):
+        if input_path.lower().endswith(".mp4") or input_path.lower().endswith(".mov") or input_path.lower().endswith(".avi"):
             # ── VIDEO INPUT ──────────────────────────────────────────────────
             frame_number = 100                          # default frame to extract
             if len(sys.argv) >= 3:                      # if a frame number was also passed
