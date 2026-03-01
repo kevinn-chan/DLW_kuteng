@@ -1,0 +1,93 @@
+import numpy as np
+import scipy.stats as stats
+from mpmath.libmp import mpf_ln2
+
+
+def monte_carlo_sims(time, weather, precinct_risks = "Medium", active_events = "None", osint_spike = "False", sims = 10000):
+    """ 
+    Multimodal B-SVaR Engine, contextualising through factors such as Fundamentals (Precint), Macro (Time,Weather), Catalyst(Events), Public (OSINT)
+    """
+    #Contextuals
+    #Fundamentals: Simulates Historical Crime/ Incident Report API/ SQL DB lookup by Camera GPS
+    if precinct_risks == "High":
+        base_rate = 1.2
+    elif precinct_risks == "Low":
+        base_rate = 0.2
+    else:
+        base_rate = 0.5
+
+    #Macros: Simulates System Clock (datetime.now())
+    if time == "Night (2AM - 5AM)":
+        base_rate *= 3.0
+    elif time == "Evening (6PM - 1AM)":
+        base_rate *=  1.5
+
+    #Macros: Simulate Weather (affects noise floor)
+    noise_factor = 1.0
+    if weather == "Heavy Rain/Storm/Snow":
+        noise_factor = 2.5 #flattens beta curve (increases uncertainty)
+    elif weather == "Fog/Low Visibility":
+        noise_factor = 1.8
+
+    #Catalyst: Shows volatility, simulates Eventbrite/ City Permit API
+    if active_events == "Protest/Riot":
+        base_rates *= 4.0
+    elif active_events == "Concert/Sports (Crowds)":
+        base_rate *= 2.0
+
+    #OSINT Spikes: Simulates X/Instagram OSINT Scraper
+    if osint_spike:
+        base_rate *= 2.5
+
+    #Beta Distribution
+    # Alpha: Frequency of expected anomalies.
+    # Beta: Strength of normalcy, high noise_factor decreases beta, making the system skeptical of visual clarity.
+    a = base_rate * noise_factor
+    b = (20.0 / noise_factor)
+
+    # Monte Carlo Simulation
+    simulations = np.random.beta(a, b, size=sims)
+
+    # Extract simulated Mean (Prior) and 95th percentile (VaR Threshold)
+    prior_prob = float(np.mean(simulations))
+    var_95 = float(np.percentile(simulations, 95))
+
+    return prior_prob, var_95
+
+
+def calculate_bayesian_posterior(prior, likelihood, false_positive_rate=0.10):
+    #Combine simulated Prior P(T) with Vision likelhood (P(V|T)) using Bayes theorem
+    # P(T|V) = [P(V|T) * P(T)] / [P(V|T)P(T) + P(V|~T)P(~T)]
+    numerator = likelihood * prior
+    denominator = numerator + (false_positive_rate * (1.0 - prior))
+
+    posterior = numerator / denominator if denominator > 0 else 0.0
+    return posterior
+
+
+#main test
+if __name__ == "__main__":
+    print("--- B-SVaR Advanced Math Engine Test ---")
+
+    # Setup a high-volatility scenario
+    prior, var_limit = monte_carlo_sims(
+        time="Night (2 AM - 5 AM)",
+        weather="Heavy Rain/Storm",
+        precinct_risks="High",
+        osint_spike=True
+    )
+
+    # Scenario: The CLIP model sees something moderately scary
+    vlm_likelihood = 0.70
+
+    true_risk = calculate_bayesian_posterior(prior, vlm_likelihood)
+
+    print(f"Contextual Prior P(T): {prior:.4f}")
+    print(f"95% VaR Threshold:    {var_limit:.4f}")
+    print(f"VLM Likelihood P(V|T): {vlm_likelihood:.4f}")
+    print(f"Final Posterior P(T|V): {true_risk:.4f}")
+
+    if true_risk > var_limit:
+        print("\n[!] ALERT: Risk breached dynamic VaR boundary.")
+    else:
+        print("\n[OK] STATUS: Evidence absorbed into contextual noise.")
