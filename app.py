@@ -90,8 +90,10 @@ with col1:
 
                 cv_results = cv_engine.calc_clip_risk(pil_img)
                 likelihood_pvt = cv_results["p_vgt"]
-                posterior_ptv = risk_engine.calculate_bayesian_posterior(prior_pt, likelihood_pvt, evidence_power=1.5)
-
+                likelihood_pvgnt = cv_results["p_vgnt"]
+                
+                posterior_ptv = risk_engine.calculate_bayesian_posterior(prior_pt, likelihood_pvt, p_vgnt=likelihood_pvgnt, evidence_power=1.5)
+                
                 st.session_state.history_posterior.append(posterior_ptv)
                 st.session_state.history_var.append(var_threshold)
 
