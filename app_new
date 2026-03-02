@@ -52,7 +52,7 @@ with col2:
 #live video
 with col1:
     st.subheader("📹Live Surveillance Feed")
-    video_file = open('assets/traffic.mp4', 'rb')
+    video_file = open('assets/trafficcropped.mp4', 'rb')
     video_bytes = video_file.read()
     stop_button = st.button("🛑Stop Stream")
 
