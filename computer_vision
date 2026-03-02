@@ -17,7 +17,10 @@ threat_anchors = [
     "An emergency situation with lives of people are at risk.",
     "A robbery or violent confrontation taking place or about to take place",
     "Someone being or about to be attacked or assaulted",
-    "Someone contemplating suicide",
+    "Someone contemplating suicide"
+    "A traffic accident or car crash"
+    "A person lying injured on the ground",
+
 ]
 
 safe_anchors= [
@@ -27,6 +30,7 @@ safe_anchors= [
     "An ordinary busy urban scene with foot traffic",
     "A regular person going on with their day",
     "People having fun",
+    "People standing still, talking, laughing, or engaging in friendly social behavior."
 ]
 
 anchors = threat_anchors + safe_anchors
@@ -94,16 +98,16 @@ def calc_clip_risk(image_input): #image can be PIL image object, file path strin
         v_image = v_raw_image / v_raw_image.norm(p = 2, dim = 1, keepdim = True)
 
         #matrix multiplication for cosine similarity score per text anchor, result is 1x anchor, squeeze(0) gives anchor
-        cosine_similarity = (v_image @ E_text.T).squeeze(0) # how similar the image is to the anchor
+        cos_similarity = (v_image @ E_text.T).squeeze(0) # how similar the image is to the anchor
 
         #higher logit_scale makes the softmax distribution sharper (winner takes more)
-        L = logit_scale * cosine_similarity
+        L = logit_scale * cos_similarity
 
         #Applying softmax to convert N raw logit scores into N probabilities that sum to 1.0
         prob = F.softmax(L, dim=0).cpu().numpy()
 
         #raw cosine similarity values bef softmax
-        raw_cs = cosine_similarity.cpu().numpy()
+        raw_cs = cos_similarity.cpu().numpy()
 
     #Probability arrays
     threat_prob = prob[:threat_count]
@@ -125,7 +129,7 @@ def calc_clip_risk(image_input): #image can be PIL image object, file path strin
     for i in range(len(anchors)):
         cosine_dict[anchors[i]] = float(raw_cs[i]) #key = anchor text, value = cs score
 
-    result = {"p_vgt": p_vgt, "prob": prob.tolist(), "threat_scores": threat_scores, "safe_scores": safe_scores, "top_threat": anchors[top_idx], "top_threat_score": float(threat_prob[top_idx]),
+    result = {"p_vgt": p_vgt, "prob": prob.tolist(), "threat_scores": threat_scores, "safe_scores": safe_scores, "top_threat": threat_anchors[top_idx], "top_threat_score": float(threat_prob[top_idx]),
               "cosine_similarity": cosine_dict, "logit_scale": float(logit_scale.item())
               }
 
