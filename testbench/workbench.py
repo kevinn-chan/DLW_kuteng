@@ -8,7 +8,7 @@ import math_engine as risk_engine
 
 def run_scenario(name, road, flow, weather, vision_likelihood):
     print(f"\n{'=' * 60}")
-    print(f"🔬Workbench Scenario: {name}")
+    print(f"Workbench Scenario: {name}")
     print(f"{'=' * 60}")
     print(f"Context   : {road} | {flow} | {weather}")
     print(f"Telemetry : Vision P(V|T) = {vision_likelihood:.4f}")
@@ -33,15 +33,15 @@ def run_scenario(name, road, flow, weather, vision_likelihood):
     print("-" * 60)
 
     if posterior > var_threshold:
-        print(f"🚨RESULT: BREACH DETECTED (+{spread:.4f} over VaR)")
+        print(f"RESULT: BREACH DETECTED (+{spread:.4f} over VaR)")
         print("Logic: Visual evidence outweighed environmental uncertainty.")
     else:
-        print(f"✅RESULT: ALARM SUPPRESSED ({spread:.4f} under VaR)")
+        print(f"RESULT: ALARM SUPPRESSED ({spread:.4f} under VaR)")
         print("Logic: Visual anomaly absorbed by contextual noise floor.")
 
 
 if __name__ == "__main__":
-    print("\n🚀INITIALIZING B-SVaR TRAFFIC WORKBENCH...\n")
+    print("\nINITIALIZING B-SVaR TRAFFIC WORKBENCH...\n")
 
     #scenario 1 (base line): Normal Day
     #moderate vision score should trigger an alert because baseline is stable
@@ -84,5 +84,5 @@ if __name__ == "__main__":
     )
 
     print(f"\n{'=' * 60}")
-    print("🏁Workbench complete. All stochastic boundaries verified.")
+    print("Workbench complete. All stochastic boundaries verified.")
     print(f"{'=' * 60}\n")
