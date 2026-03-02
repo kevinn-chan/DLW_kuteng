@@ -1,122 +1,51 @@
 import numpy as np
-import scipy.stats as stats
 
 # =====================================================================
-# HEURISTIC RISK MATRIX (THE PRIOR ASSUMPTIONS)
-# In production, these multipliers are derived from empirical city data.
-# They are exposed here as a configuration layer for transparency.
+# TRAFFIC RISK MATRIX (THE PRIOR ASSUMPTIONS)
+# Derived from traffic engineering proxies (Accident arrival rates)
 # =====================================================================
 RISK_MATRIX = {
-    "precinct_fundamentals": {
-        # Derived via Z-Score Normalization of historical crime density vs city mean
-        "High": 1.2,  # +20% expected anomaly baseline
-        "Medium": 0.5,  # City average baseline
-        "Low": 0.2  # -30% expected anomaly baseline
+    "road_type": {
+        "Complex Intersection": 1.2,
+        "High-Speed Highway": 0.8,
+        "Straight City Road": 0.4
     },
-    "temporal_macros": {
-        # Derived via Poisson Arrival Rate ratios (λ_target / λ_baseline)
-        "Night (2 AM - 5 AM)": 3.0,  # Historical 3x spike in unobserved incidents
-        "Evening (6 PM - 1 AM)": 1.5,  # Elevated foot-traffic volatility
-        "Day (6 AM - 5 PM)": 1.0  # The Reference State (Baseline)
+    "traffic_flow": {
+        "Rush Hour (Gridlock)": 2.5,
+        "Night (Low Visibility)": 2.0,
+        "Normal Flow": 1.0
     },
-    "environmental_noise": {
-        # Derived via Model Precision Decay (False Positive Rate under stress)
-        "Heavy Rain/Storm": 2.5,  # Measured 2.5x increase in False Positives (Flattens Beta)
-        "Fog/Low Visibility": 1.8,  # Measured 1.8x increase in False Positives
-        "Clear": 1.0  # The Reference State (Baseline)
-    },
-    "event_catalysts": {
-        # Simulates localized crowd density spikes from Eventbrite/City APIs
-        "Protest/Riot": 4.0,
-        "Concert/Sports (Crowds)": 2.0,
-        "None": 1.0
-    },
-    "osint_sentiment": {
-        # Multiplier applied if localized X/Telegram scraping detects panic keywords
-        True: 2.5,
-        False: 1.0
+    "surface_conditions": {
+        "Heavy Rain/Wet Asphalt": 2.5,
+        "Fog/Low Visibility": 1.8,
+        "Clear/Dry": 1.0
     }
 }
 
-
-def monte_carlo_sims(time, weather, precinct_risks="Medium", active_events="None", osint_spike=False, sims=10000):
+def monte_carlo_sims(flow, weather, road="Straight City Road", sims=10000):
     """
-    Multimodal B-SVaR Engine: Generates Contextual Prior P(T) and VaR Threshold.
+    Traffic B-SVaR Engine: Generates Contextual Prior P(T) and VaR Threshold.
     """
-    # 1. Fetch values strictly from the Risk Matrix
-    base_rate = RISK_MATRIX["precinct_fundamentals"].get(precinct_risks, 0.5)
-    time_mult = RISK_MATRIX["temporal_macros"].get(time, 1.0)
-    event_mult = RISK_MATRIX["event_catalysts"].get(active_events, 1.0)
-    osint_mult = RISK_MATRIX["osint_sentiment"].get(osint_spike, 1.0)
+    base_rate = RISK_MATRIX["road_type"].get(road, 0.4)
+    flow_mult = RISK_MATRIX["traffic_flow"].get(flow, 1.0)
+    noise_factor = RISK_MATRIX["surface_conditions"].get(weather, 1.0)
 
-    noise_factor = RISK_MATRIX["environmental_noise"].get(weather, 1.0)
+    total_arrival_rate = base_rate * flow_mult
 
-    # 2. Calculate the Total Arrival Rate (Alpha)
-    total_arrival_rate = base_rate * time_mult * event_mult * osint_mult
-
-    # 3. Parameterize the Beta Distribution
-    # Alpha (a): Frequency of expected anomalies.
-    # Beta (b): Strength of normalcy. High noise_factor decreases beta (increases skepticism).
+    # Alpha (a) scales with arrival rate and noise.
+    # Beta (b) drops with noise, flattening the curve for uncertainty.
     a = total_arrival_rate * noise_factor
     b = (20.0 / noise_factor)
 
-    # 4. Monte Carlo Simulation
     simulations = np.random.beta(a, b, size=sims)
 
-    # Extract simulated Mean (Prior) and 95th percentile (VaR Threshold)
     prior_prob = float(np.mean(simulations))
     var_95 = float(np.percentile(simulations, 95))
 
     return prior_prob, var_95
 
-
 def calculate_bayesian_posterior(prior, likelihood, false_positive_rate=0.10):
-    """
-    Calculates P(T|V) using Bayes' Theorem.
-    """
+    """Calculates P(T|V) using Bayes' Theorem."""
     numerator = likelihood * prior
     denominator = numerator + (false_positive_rate * (1.0 - prior))
     return numerator / denominator if denominator > 0 else 0.0
-
-
-# ==========================================
-# UNIT TEST
-# ==========================================
-if __name__ == "__main__":
-    print("--- B-SVaR Advanced Math Engine Test ---")
-
-    # 1. Define the Context (Strings must match the dictionary keys exactly)
-    test_time = "Night (2 AM - 5 AM)"
-    test_weather = "Heavy Rain/Storm"
-    test_precinct = "High"
-    test_osint = True
-
-    prior, var_limit = monte_carlo_sims(
-        time=test_time,
-        weather=test_weather,
-        precinct_risks=test_precinct,
-        osint_spike=test_osint
-    )
-
-    # 2. Simulate the CLIP Vision Model Likelihood
-    vlm_likelihood = 0.70
-
-    # 3. Bayesian Fusion
-    true_risk = calculate_bayesian_posterior(prior, vlm_likelihood)
-
-    print(f"\n--- Contextual Multipliers Applied ---")
-    print(f"Time ({test_time}): {RISK_MATRIX['temporal_macros'][test_time]}x")
-    print(f"Weather ({test_weather}): {RISK_MATRIX['environmental_noise'][test_weather]}x (Noise)")
-    print(f"Precinct ({test_precinct}): {RISK_MATRIX['precinct_fundamentals'][test_precinct]}x baseline")
-    print(f"OSINT Spike: {RISK_MATRIX['osint_sentiment'][test_osint]}x")
-
-    print(f"\n--- B-SVaR Output ---")
-    print(f"Contextual Prior P(T): {prior:.4f}")
-    print(f"95% VaR Threshold:    {var_limit:.4f}")
-    print(f"VLM Likelihood P(V|T): {vlm_likelihood:.4f}")
-    print(f"Final Posterior P(T|V): {true_risk:.4f}")
-
-    if true_risk > var_limit:
-        print("\n[!] ALERT: Risk breached dynamic VaR boundary.")
-    else:
-        print("\n[OK] STATUS: Evidence absorbed into contextual noise.")
