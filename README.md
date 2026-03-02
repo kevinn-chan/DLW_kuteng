@@ -2,13 +2,13 @@
 **🚦Bayesian-Simulated Value-at-Risk**
 
 ### **1. The Vision**
-Traditional safety AI is binary—it detects objects but ignores context. This creates an "Interpretation Gap" where a rainy night triggers the same alerts as a clear afternoon, leading to fatal alarm fatigue. 
+Surveillance cameras and traditional safety AI detects objects but ignores context. This creates an "Interpretation Gap" where a rainy night triggers the same alerts as a clear afternoon, leading to fatal alarm fatigue. 
 
-**B-SVaR** closes this gap by porting **Quantitative Financial Risk Modeling** into public safety. We move from *detecting objects* to *quantifying environmental chaos*.
+Our project closes this gap by porting **Mathematical and Value-at-Risk (VaR) frameworks** into public safety. We move from *detecting objects* to *quantifying environmental chaos*.
 
 ### **2. Key Innovations**
-* **The Stochastic Noise Floor (Monte Carlo)**: We establish a dynamic **Value-at-Risk (VaR)** threshold using 10,000 Monte Carlo simulations based on road architecture, traffic flow, and weather. This represents the environmental "noise floor."
-* **Semantic Intent Engine (Zero-Shot CLIP)**: Unlike standard object detection, we use a **CLIP Transformer** to understand the *intent* of a scene using 22 engineered semantic anchors (e.g., "crumpled metal" vs. "normal traffic").
+* **The Stochastic Noise Floor (Monte Carlo)**: We establish a dynamic **VaR** threshold using 10,000 Monte Carlo simulations based on road architecture, traffic flow, and weather. This represents the environmental noise floor.
+* **Semantic Intent Engine (Zero-Shot CLIP)**: Unlike standard object detection, we use a **CLIP Transformer** to understand the *intent* of a scene using several engineered semantic anchors (e.g., "crumpled metal" vs. "normal traffic").
 * **Actionable Certainty**: Our **Persistence Gate** requires consecutive breaches of the VaR threshold before confirming an incident, ensuring emergency responders only act on verified data.
 
 ### **3. System Architecture**
@@ -58,4 +58,4 @@ This script will output the results of three critical stress tests:
 ---
 
 **Developed by Team Kuteng**
-*Quantifying the chaos of the smart city to support informed decision-making.*
+*Quantifying the chaos of the smart city to support informed decision making.*
