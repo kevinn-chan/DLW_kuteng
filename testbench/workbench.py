@@ -2,7 +2,7 @@ import math_engine as risk_engine
 
 def run_scenario(name, road, flow, weather, vision_likelihood):
     print(f"\n{'=' * 60}")
-    print(f"🔬WOorkbench Scenario: {name}")
+    print(f"🔬Workbench Scenario: {name}")
     print(f"{'=' * 60}")
     print(f"Context   : {road} | {flow} | {weather}")
     print(f"Telemetry : Vision P(V|T) = {vision_likelihood:.4f}")
