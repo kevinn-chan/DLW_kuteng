@@ -6,3 +6,4 @@ cd /d "C:\<FILE DIRECTORY>"
 python -m pip install --upgrade pip
 python -m pip install torch torchvision torchaudio
 python -m pip install transformers pillow
+python -m streamlit run app.py
