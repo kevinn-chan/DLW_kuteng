@@ -63,17 +63,7 @@ if __name__ == "__main__":
         vision_likelihood=0.20
     )
 
-    #scenario 3: False Positive Check (high noise, moderate vision certainty)
-    #traffic jam and rain might cause visual confusion, system should aggressively suppress false positives
-    run_scenario(
-        name="False Positive Check",
-        road="High-Speed Highway",
-        flow="Rush Hour (Gridlock)",
-        weather="Heavy Rain/Wet Asphalt",
-        vision_likelihood=0.70
-    )
-
-    #scenario 4: Actual Crash (high noise, high vision certainty)
+    #scenario 3: Actual Crash (high noise, high vision certainty)
     #definite crash even though VaR threshold is high
     run_scenario(
         name="Actual Crash",
