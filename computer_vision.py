@@ -9,10 +9,9 @@ from collections import deque
 
 logger = logging.getLogger(__name__)
 
-# --- THE ROLLING MEMORY BUFFER ---
 history_buffer = deque(maxlen=5)
 
-# --- TRAFFIC ANCHORS ---
+#risky  conditions
 threat_anchors = [
     "A violent traffic accident or severe car crash",
     "A multi-car pileup on the road",
@@ -22,6 +21,7 @@ threat_anchors = [
     "A person lying injured on the street after an accident"
 ]
 
+#safe conditions
 safe_anchors = [
     "A normal city street with vehicles driving past safely",
     "Heavy traffic moving slowly or bumper-to-bumper without incident",
@@ -31,6 +31,7 @@ safe_anchors = [
     "An empty urban road or highway with no cars"
 ]
 
+#out of domain conditions
 ood_anchors = [
     "An indoor room or kitchen",
     "A person talking to the camera indoors",
@@ -114,18 +115,14 @@ def calc_clip_risk(image_input):
     safe_prob  = float(np.sum(safe_probs))
     
     traffic_prob = crash_prob + safe_prob
-    crash_share = crash_prob / max(traffic_prob, eps)     # “how crash-like” among traffic labels
+    crash_share = crash_prob / max(traffic_prob, eps)    
     safe_share  = safe_prob  / max(traffic_prob, eps)
     
-    # Keep a light "is this traffic at all?" gate
     ood_prob = float(np.sum(ood_probs))
     raw_p_vgt  = float(np.clip(crash_share * (1.0 - ood_prob), 0.0, 1.0))
     
-    # Also return p_vgnt properly:
     p_vgnt = float(np.clip(safe_share, 0.0, 1.0))
 
-
-    # --- TEMPORAL SMOOTHING ---
     history_buffer.append(raw_p_vgt)
     alpha = 0.6
     if len(history_buffer) == 0:
