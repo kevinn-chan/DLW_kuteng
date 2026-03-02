@@ -30,7 +30,7 @@ cd DLW_kuteng
 **Step 2: Install Dependencies**
 Ensure you have Python 3.9+ installed, then run:
 ```bash
-pip install -r requirements.txt
+py -m pip install -r requirements.txt
 ```
 *(Note: Core dependencies include `torch`, `transformers`, `streamlit`, `opencv-python`, `numpy`, `pandas`, and `pillow`.)*
 
