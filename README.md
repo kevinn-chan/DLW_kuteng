@@ -1,28 +1,27 @@
-# 🚦 B-SVaR: Bayesian-Simulated Value-at-Risk for Urban Traffic
+# 🚦 B-SVaR: Bayesian-Simulated Value-at-Risk
+**Autonomous Traffic Incident Engine for Context-Aware Public Safety**
 
-**B-SVaR** is an autonomous traffic incident engine that applies quantitative financial risk methodologies (Monte Carlo Simulations, Value-at-Risk) to spatial urban infrastructure. 
+### **1. The Vision**
+Traditional safety AI is binary—it detects objects but ignores context. This creates an "Interpretation Gap" where a rainy night triggers the same alerts as a clear afternoon, leading to fatal alarm fatigue. 
 
-By fusing zero-shot semantic computer vision (OpenAI CLIP) with a stochastic environmental risk matrix, B-SVaR dynamically adjusts its sensitivity based on real-world conditions (weather, traffic flow, road type). This mathematically eliminates the false-positive rate commonly associated with 2D CCTV cameras in complex urban environments.
+**B-SVaR** closes this gap by porting **Quantitative Financial Risk Modeling** into public safety. We move from *detecting objects* to *quantifying environmental chaos*.
 
-## 🧠 Core Architecture
-1. **The Vision Sensor (`computer_vision.py`):** Utilizes a heavily optimized, custom linear algebra implementation of OpenAI's CLIP model. It extracts the semantic likelihood $P(V|T)$ of a traffic incident and applies a 5-frame temporal smoothing buffer to eliminate visual jitter.
-2. **The Stochastic Engine (`math_engine.py`):** Calculates a contextual Prior $P(T)$ and a 95% Value-at-Risk (VaR) threshold using a Monte Carlo simulation across a parameter-shifted Beta distribution.
-3. **The Bayesian Fusion (`app.py`):** A real-time Streamlit command center that updates the posterior risk $P(T|V)$. An alert is only triggered if the visual evidence statistically outweighs the environmental noise floor.
+### **2. Key Innovations**
+* **The Stochastic Noise Floor (Monte Carlo)**: We establish a dynamic **Value-at-Risk (VaR)** threshold using 10,000 Monte Carlo simulations based on road architecture, traffic flow, and weather. This represents the environmental "noise floor."
+* **Semantic Intent Engine (Zero-Shot CLIP)**: Unlike standard object detection, we use a **CLIP Transformer** to understand the *intent* of a scene using 22 engineered semantic anchors (e.g., "crumpled metal" vs. "normal traffic").
+* **Actionable Certainty**: Our **Persistence Gate** requires consecutive breaches of the VaR threshold before confirming an incident, ensuring emergency responders only act on verified data.
 
-## ⚙️ Quickstart Installation
-Ensure you have Python 3.10+ installed.
+### **3. System Architecture**
+* `math_engine.py`: The analytical core. Runs the Monte Carlo simulations and Odds-form Bayesian fusion.
+* `computer_vision.py`: The semantic sensor. Performs zero-shot inference using OpenAI's CLIP, featuring Out-of-Domain (OOD) suppression.
+* `app.py`: The orchestration layer. A real-time Streamlit dashboard for telemetry and environmental toggle testing.
+* `testbench/`: Automated headless scripts to verify mathematical stability across extreme weather and traffic scenarios.
 
+---
+
+### **4. Setup Instructions**
+
+**Step 1: Clone the Repository**
 ```bash
-# 1. Clone the repository
 git clone [https://github.com/YOUR_USERNAME/B-SVaR.git](https://github.com/YOUR_USERNAME/B-SVaR.git)
 cd B-SVaR
-
-# 2. Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Run the Streamlit Dashboard
-streamlit run app.py
