@@ -8,7 +8,7 @@ import computer_vision as cv_engine
 import math_engine as risk_engine
 
 # --- UI SETUP ---
-st.set_page_config(page_title="B-SVaR Traffic Engine", page_icon="🚦", layout="wide")
+st.set_page_config(page_title="Traffic Engine", page_icon="🚦", layout="wide")
 st.title("🚦 Autonomous Traffic Incident Engine")
 st.markdown("Real-time Bayesian fusion of semantic visual telemetry and infrastructural risk.")
 st.divider()
