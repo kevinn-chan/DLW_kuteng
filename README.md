@@ -41,7 +41,7 @@ pip install -r requirements.txt
 **Launch the Live Dashboard (UI)**
 To view the real-time Bayesian fusion and interact with the environmental toggles:
 ```bash
-streamlit run app.py
+py -m streamlit run app.py
 ```
 This will open the application in your default web browser. You can use the sidebar to change the "Infrastructure Profile" and watch the Blue VaR Line dynamically adjust to the new environment.
 
