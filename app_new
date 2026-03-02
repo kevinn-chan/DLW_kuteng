@@ -93,7 +93,7 @@ with col1:
                 st.session_state.history_posterior.append(posterior_ptv)
                 st.session_state.history_var.append(var_threshold)
 
-                likelihood_placeholder.info(f"👁️ **Smoothed Vision Likelihood $P(V|T)$:** `{likelihood_pvt:.4f}`")
+                likelihood_placeholder.info(f"👁️**Smoothed Vision Likelihood $P(V|T)$:** `{likelihood_pvt:.4f}`")
 
                 if st.session_state.gate.update(posterior_ptv, var_threshold):
                     status_placeholder.error(f"🚨**CRASH DETECTED** \n\nPosterior Risk ({posterior_ptv:.4f}) exceeded VaR.")
