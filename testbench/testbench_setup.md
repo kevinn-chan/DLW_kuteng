@@ -29,10 +29,6 @@ The script will output the exact risk spreads (Delta), VaR Thresholds, and Bayes
   * **Goal:** Test the Stochastic Prior.
   * **Expected Result:** The Monte Carlo engine correctly raises the VaR "Noise Floor" due to extreme weather (Night/Rain), proving the system defends against visual noise before it even occurs.
 
-* **Scenario 3: False Positive Check**
-  * **Goal:** Stress-test the Bayesian Filter.
-  * **Expected Result:** The system successfully suppresses a high visual "false positive" (0.70) because the mathematical logic determines the anomaly is absorbed by the chaotic environment of a stormy rush hour.
-
-* **Scenario 4: Actual Crash**
+* **Scenario 3: Actual Crash**
   * **Goal:** Prove the system is not blind in severe conditions.
   * **Expected Result:** Despite a massively elevated noise floor from rain and gridlock, a genuine, high-certainty visual threat (0.95) successfully breaches the VaR threshold, triggering a confirmed alert.
