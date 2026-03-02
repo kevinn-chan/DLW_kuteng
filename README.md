@@ -1,5 +1,5 @@
-# 🚦Bayesian-Simulated Value-at-Risk
-**Autonomous Traffic Incident Engine for Context-Aware Public Safety**
+# Autonomous Traffic Incident Engine for Context-Aware Public Safety
+**🚦Bayesian-Simulated Value-at-Risk**
 
 ### **1. The Vision**
 Traditional safety AI is binary—it detects objects but ignores context. This creates an "Interpretation Gap" where a rainy night triggers the same alerts as a clear afternoon, leading to fatal alarm fatigue. 
