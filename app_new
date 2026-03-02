@@ -7,7 +7,7 @@ from PIL import Image
 import computer_vision as cv_engine
 import math_engine as risk_engine
 
-# --- UI SETUP ---
+#base ui
 st.set_page_config(page_title="Traffic Engine", page_icon="🚦", layout="wide")
 st.title("🚦 Autonomous Traffic Incident Engine")
 st.markdown("Real-time Bayesian fusion of semantic visual telemetry and infrastructural risk.")
@@ -18,7 +18,7 @@ if 'history_posterior' not in st.session_state:
 if 'history_var' not in st.session_state:
     st.session_state.history_var = []
 
-# --- SIDEBAR: CONTEXTUAL INPUTS ---
+#sidebar for environment contexts
 st.sidebar.header("🛣️Infrastructure Profile")
 road_type = st.sidebar.selectbox("Road Architecture", ["Straight City Road", "High-Speed Highway", "Complex Intersection"], index=0)
 
@@ -26,7 +26,7 @@ st.sidebar.header("🌦️Environmental Macro")
 traffic_flow = st.sidebar.selectbox("Traffic Flow State", ["Normal Flow", "Rush Hour (Gridlock)", "Night (Low Visibility)"], index=0)
 weather = st.sidebar.selectbox("Surface Conditions", ["Clear/Dry", "Fog/Low Visibility", "Heavy Rain/Wet Asphalt"], index=0)
 
-# --- RUN MATH ENGINE ---
+#initiating math engine
 prior_pt, var_threshold = risk_engine.monte_carlo_sims(
     flow=traffic_flow,
     weather=weather,
@@ -34,9 +34,10 @@ prior_pt, var_threshold = risk_engine.monte_carlo_sims(
     evidence_power=1.5
 )
 
-# --- UI LAYOUT ---
+#actual ui
 col1, col2 = st.columns([2, 1.2])
 
+#show risk metrics and graph
 with col2:
     st.subheader("📊Quantitative Risk Metrics")
     m1, m2 = st.columns(2)
@@ -48,6 +49,7 @@ with col2:
     likelihood_placeholder = st.empty()
     chart_placeholder = st.empty()
 
+#live video
 with col1:
     st.subheader("📹Live Surveillance Feed")
     video_file = open('assets/traffic.mp4', 'rb')
@@ -82,7 +84,7 @@ with col1:
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             st_frame.image(frame_rgb, use_container_width=True, channels="RGB")
 
-            # Sample every 10 frames to keep the Streamlit app highly responsive
+            #sample every 10 frames to keep the app highly responsive
             if frame_count % 10 == 0:
                 pil_img = Image.fromarray(frame_rgb)
 
