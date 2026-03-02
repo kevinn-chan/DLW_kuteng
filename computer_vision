@@ -120,8 +120,6 @@ def calc_clip_risk(image_input):
 # Final likelihood (kills out-of-domain + low-confidence cases)
     raw_p_vgt = crash_prob * traffic_prob * confidence
 
-    # Raw P(V|T)
-    raw_p_vgt = float(np.sum(threat_prob))
 
     # --- TEMPORAL SMOOTHING ---
     history_buffer.append(raw_p_vgt)
