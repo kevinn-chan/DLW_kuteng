@@ -23,8 +23,8 @@ Our project closes this gap by porting **Mathematical and Value-at-Risk (VaR) fr
 
 **Step 1: Clone the Repository**
 ```bash
-git clone https://github.com/kevinn-chan/DLW_kuteng.git
-cd DLW_kuteng
+git clone https://github.com/kevinn-chan/CARE.git
+cd CARE
 ```
 
 **Step 2: Install Dependencies**
